@@ -1,2 +1,2 @@
-# docker-fullstack
-set up docker for mongo express react
+# node-docker
+Simple node and express docker 
