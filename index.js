@@ -1,28 +1,30 @@
-import express from "express";
-import mongodb from "mongodb";
-import config from "./data";
+import express from 'express';
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser';
+import routes from './src/routes/crmRoutes';
 
 const app = express();
 const PORT = 4000;
-const client = mongodb.MongoClient;
 
-client.connect(
-  config.DB,
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  (err, db) => {
-    if (err) {
-      console.log(err);
-      console.log("database is not connected");
-    } else {
-      console.log("connected!!");
-    }
-  }
+// mongoose connection
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://mongo:27017/crm', {
+    useMongoClient: true
+});
+
+// bodyparser setup
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+routes(app);
+
+// serving static files
+app.use(express.static('public'));
+
+app.get('/', (req, res) =>
+    res.send(`Node and express server is running on port ${PORT}`)
 );
 
-app.get("/", (req, res) => {
-  res.json("I love docker!");
-});
-
-app.listen(PORT, () => {
-  console.log("Your server is running on PORT:", PORT);
-});
+app.listen(PORT, () =>
+    console.log(`your server is running on port ${PORT}`)
+);
